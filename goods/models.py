@@ -14,6 +14,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('main:home', kwargs={"category_slug": self.slug})
+
 
 class Product(models.Model):
     name = models.CharField("Название", max_length=150, unique=True)
@@ -30,6 +33,7 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
+        ordering = ("id",)
 
     def __str__(self):
         return f"{self.name}"
