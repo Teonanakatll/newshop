@@ -11,6 +11,14 @@ def catalog(request, category_slug):
     else:
         goods = get_list_or_404(Product.objects.filter(category__slug=category_slug))
 
+    on_sale = request.GET.get('on_sale', None)
+    order_by = request.GET.get('order_by', None)
+
+    if on_sale:
+        goods = goods.filter(discount__gt=0)
+    if order_by and order_by != "default":
+        goods = goods.order_by(order_by)
+
     paginator = Paginator(goods, 3)
     page_number = request.GET.get('page')
     try:
@@ -23,6 +31,7 @@ def catalog(request, category_slug):
     context = {
         "title": "Home - Каталог",
         "page_obj": page_obj,
+        "category_slug": category_slug,
     }
     return render(request, "goods/catalog.html", context)
 
