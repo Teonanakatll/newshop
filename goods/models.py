@@ -8,6 +8,7 @@ class Category(models.Model):
     slug = models.SlugField("url", max_length=200, unique=True, blank=True, null=True)
 
     class Meta:
+        db_table = "category"
         verbose_name = "Категорию"
         verbose_name_plural = "Категории"
 
@@ -31,6 +32,7 @@ class Product(models.Model):
     category = models.ForeignKey(to=Category, on_delete=models.CASCADE)
 
     class Meta:
+        db_table = "product"
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
         ordering = ("id",)
