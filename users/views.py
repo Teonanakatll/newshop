@@ -13,10 +13,19 @@ def login(request):
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
+            # проводим аутентификацию пользователя
             user = auth.authenticate(username=username, password=password)
+            # если пользователь существует в бд
             if user:
+                # логинимся
                 auth.login(request, user)
                 messages.success(request, f"{username}, вы успешно вошли в аккаунт!")
+
+                # проверим если пользователь был перенаправлен на этот контроллер (@login_required)
+                # отправляем его на страницу указанную в hidden-input
+                if request.POST.get('next', None):
+                    return HttpResponseRedirect(request.POST.get('next'))
+
                 return HttpResponseRedirect(reverse('main:home'))
     else:
         form = UserLoginForm()
@@ -58,7 +67,6 @@ def profile(request):
         # чтобы добавить изображение присваиваем переменной files файл из request
 
         form = ProfileForm(data=request.POST, instance=request.user, files=request.FILES)
-        print(request.user)
         if form.is_valid():
             print('yes')
             form.save()
@@ -76,7 +84,7 @@ def profile(request):
 
 @login_required
 def logout(request):
-    messages.success(request, f"{request.user.username}, вы вышли из аккаунта! ")
+    messages.success(request, f"{request.user.username}, вы вышли из аккаунта!")
     auth.logout(request)
 
     return redirect('main:home')

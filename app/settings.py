@@ -142,4 +142,7 @@ INTERNAL_IPS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# переопределяем модель юзер
 AUTH_USER_MODEL = "users.User"
+# прописываем свой путь к странице login
+LOGIN_URL = '/user/login/'
