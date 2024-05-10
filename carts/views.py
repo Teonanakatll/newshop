@@ -42,8 +42,31 @@ def cart_add(request):
 
 
 def cart_change(request):
-    ...
-    return render()
+
+    cart_id = request.POST.get('cart_id')
+    new_quantity = request.POST.get('quantity')
+
+    cart = Cart.objects.get(id=cart_id)
+
+    if cart.quantity < int(new_quantity):
+        message = "1 товар добавлен"
+    else:
+        message = "1 товар удалён"
+    cart.quantity = new_quantity
+    cart.save()
+
+    user_carts = get_user_carts(request)
+    cart_items_html = render_to_string(
+        "carts/includes/included_cart.html", {"carts": user_carts}, request=request
+    )
+
+    response_data = {
+        "message": message,
+        "cart_items_html": cart_items_html,
+    }
+
+    return JsonResponse(response_data)
+
 
 def cart_remove(request):
 
