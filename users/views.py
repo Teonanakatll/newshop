@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from carts.models import Cart
 from .forms import UserLoginForm, UserRegistrationForm, ProfileForm
 
 
@@ -15,11 +16,18 @@ def login(request):
             password = request.POST['password']
             # проводим аутентификацию пользователя
             user = auth.authenticate(username=username, password=password)
+
+            session_key = request.session.session_key
+
             # если пользователь существует в бд
             if user:
                 # логинимся
                 auth.login(request, user)
                 messages.success(request, f"{username}, вы успешно вошли в аккаунт!")
+
+                # если пользователь добавлял товары не авторизуясь, во время авторизации добавляем их через session_key
+                if session_key:
+                    Cart.objects.filter(session_key=session_key).update(user=user)
 
                 # проверим если пользователь был перенаправлен на этот контроллер (@login_required)
                 # отправляем его на страницу указанную в hidden-input
@@ -46,9 +54,17 @@ def registration(request):
         form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
             form.save()
+
+            session_key = request.session.session_key
+
             # instance получаем все поля формы
             user = form.instance
             auth.login(request, user)
+
+            # если пользователь добавлял товары не регистрируясь, во время регистрации добавляем их через session_key
+            if session_key:
+                Cart.objects.filter(session_key=session_key).update(user=user)
+
             messages.success(request, f"{user.username}, вы успешно зарегестрировались и вошли в аккаунт!")
             return redirect('main:home')
     else:
