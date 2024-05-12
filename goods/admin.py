@@ -14,12 +14,18 @@ class CategoriesAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductsAdmin(admin.ModelAdmin):
     """Продукты"""
+
     list_display = ("id", "name", "get_image", "discount", "time_create", "time_update")
     list_editable = ("discount",)
-    list_filter = ("category__name", "time_create")
-    search_fields = ("category__name", "time_create", "time_update")
+    list_filter = ("id","category__name", "time_create")
+    search_fields = ("id", "category__name", "time_create", "time_update")
     list_display_links = ("name", "time_create")
     prepopulated_fields = {"slug": ("name",)}
+
+    # Отобразить панель редактирования сверху
+    save_on_top = True
+    # Сохранить как новый обьект
+    save_as = True
 
     fields = (
         "name",
@@ -29,7 +35,6 @@ class ProductsAdmin(admin.ModelAdmin):
         "slug",
         "get_image",
         "image",
-
     )
 
     readonly_fields = ("get_image",)

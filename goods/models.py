@@ -38,7 +38,7 @@ class Product(models.Model):
         ordering = ("id",)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} | id:{self.pk}"
 
     def get_absolute_url(self):
         return reverse('catalog:product', kwargs={'product_slug': self.slug})

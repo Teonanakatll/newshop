@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from carts.admin import CartTabAdmin
+from orders.admin import OrderTabAdmin
 from . models import User
 
 @admin.register(User)
@@ -11,7 +12,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display_links = ("username",)
     readonly_fields = ("get_avatar",)
 
-    inlines = [CartTabAdmin,]
+    inlines = [CartTabAdmin, OrderTabAdmin]
 
     def get_avatar(self, object):
         if object.image:
